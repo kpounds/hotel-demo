@@ -34,12 +34,14 @@ const Home: NextPage = () => {
   if (!data) return <div>Loading...</div>
   return (
     <div>
-      {data.map(roomData => {
-        return <Room key={roomData.room} roomData={roomData} />
-      })}
-      <button type="submit" onClick={() => RoomsApi.setRoomData(testData)}>
-        Submit
-      </button>
+      <form>
+        {data.map(roomData => {
+          return <Room key={roomData.room} roomData={roomData} />
+        })}
+        <button type="submit" onClick={() => RoomsApi.setRoomData(testData)}>
+          Submit
+        </button>
+      </form>
     </div>
   )
 }

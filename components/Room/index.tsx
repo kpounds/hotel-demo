@@ -9,18 +9,37 @@ const Room: React.FunctionComponent<IRoomProps> = ({ roomData }) => {
   return (
     <div>
       <h4>
-        {roomData.room !== 1 && (
-          <input type="checkbox" defaultChecked={roomData.selected} />
+        {roomData.room !== 1 ? (
+          <>
+            <input
+              type="checkbox"
+              defaultChecked={roomData.selected}
+              name={`roomCheck-${roomData.room}`}
+              id={`roomCheck-${roomData.room}`}
+            />
+            <label htmlFor={`roomCheck-${roomData.room}`}>
+              Room {roomData.room}
+            </label>
+          </>
+        ) : (
+          <span>Room {roomData.room}</span>
         )}
-        Room {roomData.room}
       </h4>
-      <label htmlFor="adults">Adults (18+)</label>
-      <select name="adults" id="adults" defaultValue={roomData.adults}>
+      <label htmlFor={`adults-${roomData.room}`}>Adults (18+)</label>
+      <select
+        name={`adults-${roomData.room}`}
+        id={`adults-${roomData.room}`}
+        defaultValue={roomData.adults}
+      >
         <option value={1}>1</option>
         <option value={2}>2</option>
       </select>
-      <label htmlFor="children">Children (0-17)</label>
-      <select name="children" id="children" defaultValue={roomData.children}>
+      <label htmlFor={`children-${roomData.room}`}>Children (0-17)</label>
+      <select
+        name={`children-${roomData.room}`}
+        id={`children-${roomData.room}`}
+        defaultValue={roomData.children}
+      >
         <option value={0}>0</option>
         <option value={1}>1</option>
         <option value={2}>2</option>
