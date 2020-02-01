@@ -16,7 +16,7 @@ const Home: NextPage = () => {
       room: 2,
       selected: true,
       adults: 2,
-      children: 3
+      children: 1
     },
     {
       room: 3,
