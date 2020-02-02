@@ -3,28 +3,19 @@ import RoomList from "../../models/RoomList"
 
 interface IRoomProps {
   roomData: RoomList
-  changeRoomData: (data: RoomList) => void
+  checked: boolean
+  handleChangeValue: (
+    e: SyntheticEvent,
+    room: number,
+    key: "selected" | "adults" | "children"
+  ) => void
 }
 
 const Room: React.FunctionComponent<IRoomProps> = ({
   roomData,
-  changeRoomData
+  checked,
+  handleChangeValue
 }) => {
-  const handleChangeCheckbox = (e: SyntheticEvent, key: "selected") => {
-    const input = e.target as HTMLInputElement
-    const updatedRoomData: RoomList = roomData
-    updatedRoomData[key] = input.checked
-    changeRoomData(updatedRoomData)
-  }
-  const handleChangeSelect = (
-    e: SyntheticEvent,
-    key: "adults" | "children"
-  ) => {
-    const input = e.target as HTMLSelectElement
-    const updatedRoomData: RoomList = roomData
-    updatedRoomData[key] = input.selectedIndex
-    changeRoomData(updatedRoomData)
-  }
   return (
     <div>
       <h4>
@@ -35,7 +26,7 @@ const Room: React.FunctionComponent<IRoomProps> = ({
               defaultChecked={roomData.selected}
               name={`roomCheck-${roomData.room}`}
               id={`roomCheck-${roomData.room}`}
-              onChange={e => handleChangeCheckbox(e, "selected")}
+              onChange={e => handleChangeValue(e, roomData.room, "selected")}
             />
             <label htmlFor={`roomCheck-${roomData.room}`}>
               Room {roomData.room}
@@ -50,7 +41,7 @@ const Room: React.FunctionComponent<IRoomProps> = ({
         name={`adults-${roomData.room}`}
         id={`adults-${roomData.room}`}
         defaultValue={roomData.adults}
-        onChange={e => handleChangeSelect(e, "adults")}
+        onChange={e => handleChangeValue(e, roomData.room, "adults")}
       >
         <option value={1}>1</option>
         <option value={2}>2</option>
@@ -60,7 +51,7 @@ const Room: React.FunctionComponent<IRoomProps> = ({
         name={`children-${roomData.room}`}
         id={`children-${roomData.room}`}
         defaultValue={roomData.children}
-        onChange={e => handleChangeSelect(e, "children")}
+        onChange={e => handleChangeValue(e, roomData.room, "children")}
       >
         <option value={0}>0</option>
         <option value={1}>1</option>

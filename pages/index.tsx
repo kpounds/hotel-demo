@@ -2,7 +2,7 @@ import { NextPage } from "next"
 import Room from "../components/Room"
 import RoomsApi from "../api/RoomsApi"
 import RoomList from "../models/RoomList"
-import { useState, useEffect } from "react"
+import { useState, useEffect, SyntheticEvent } from "react"
 
 const Home: NextPage<{ defaultData: RoomList[] }> = ({
   defaultData = [new RoomList()]
@@ -13,11 +13,19 @@ const Home: NextPage<{ defaultData: RoomList[] }> = ({
     const data = RoomsApi.getRoomData()
     setRoomData(data)
   }, [])
-  // method to change individual room data and store in state
-  const handleChangeRoomData = (data: RoomList) => {
+  const handleChangeValue = (
+    e: SyntheticEvent,
+    room: number,
+    key: "selected" | "adults" | "children"
+  ) => {
+    const checkBox = e.target as HTMLInputElement
+    const select = e.target as HTMLSelectElement
     const current = roomData
-    const roomToChange = current.findIndex(x => x.room === data.room)
-    current[roomToChange] = data
+    const roomToChange = current.findIndex(x => x.room === room)
+    key === "selected"
+      ? (current[roomToChange][key] = checkBox.checked)
+      : (current[roomToChange][key] = parseInt(select.value))
+    console.log(current)
     setRoomData(current)
   }
   if (!roomData) return <div>Loading...</div>
@@ -29,7 +37,8 @@ const Home: NextPage<{ defaultData: RoomList[] }> = ({
             <Room
               key={item.room}
               roomData={item}
-              changeRoomData={handleChangeRoomData}
+              checked={item.selected}
+              handleChangeValue={handleChangeValue}
             />
           )
         })}
