@@ -2,7 +2,7 @@ import RoomList from "../models/RoomList"
 import { defaultRoomData } from "../data/defaultRoomData"
 
 class RoomsApi {
-  public getRoomData = async (): Promise<RoomList[]> => {
+  public getRoomData = (): RoomList[] => {
     let rooms: RoomList[] = []
     const data = localStorage.getItem("rooms")
     if (!data) {

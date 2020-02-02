@@ -1,44 +1,39 @@
 import { NextPage } from "next"
-import useSWR from "swr"
 import Room from "../components/Room"
 import RoomsApi from "../api/RoomsApi"
+import RoomList from "../models/RoomList"
+import { useState, useEffect } from "react"
 
-const Home: NextPage = () => {
-  const { data } = useSWR("/api/data", RoomsApi.getRoomData)
-  const testData = [
-    {
-      room: 1,
-      selected: true,
-      adults: 1,
-      children: 0
-    },
-    {
-      room: 2,
-      selected: true,
-      adults: 2,
-      children: 1
-    },
-    {
-      room: 3,
-      selected: true,
-      adults: 1,
-      children: 2
-    },
-    {
-      room: 4,
-      selected: false,
-      adults: 1,
-      children: 0
-    }
-  ]
-  if (!data) return <div>Loading...</div>
+const Home: NextPage<{ defaultData: RoomList[] }> = ({
+  defaultData = [new RoomList()]
+}) => {
+  const [roomData, setRoomData] = useState(defaultData)
+  useEffect(() => {
+    // get user's saved data or default values once on mount
+    const data = RoomsApi.getRoomData()
+    setRoomData(data)
+  }, [])
+  // method to change individual room data and store in state
+  const handleChangeRoomData = (data: RoomList) => {
+    const current = roomData
+    const roomToChange = current.findIndex(x => x.room === data.room)
+    current[roomToChange] = data
+    setRoomData(current)
+  }
+  if (!roomData) return <div>Loading...</div>
   return (
     <div>
       <form>
-        {data.map(roomData => {
-          return <Room key={roomData.room} roomData={roomData} />
+        {roomData.map((item: RoomList) => {
+          return (
+            <Room
+              key={item.room}
+              roomData={item}
+              changeRoomData={handleChangeRoomData}
+            />
+          )
         })}
-        <button type="submit" onClick={() => RoomsApi.setRoomData(testData)}>
+        <button type="submit" onClick={() => RoomsApi.setRoomData(roomData)}>
           Submit
         </button>
       </form>
