@@ -1,13 +1,17 @@
 import { SyntheticEvent, Component } from "react"
 import RoomsApi from "../api/RoomsApi"
-import RoomList from "../models/RoomList"
 import RoomsStore from "../stores/RoomsStore"
 import { inject, observer } from "mobx-react"
 import Rooms from "../components/Rooms"
+import styled from "styled-components"
 
 interface IHomeProps {
   roomsStore: RoomsStore
 }
+
+const StyledButton = styled.button`
+  margin: 7px;
+`
 
 @inject("roomsStore")
 @observer
@@ -42,9 +46,9 @@ class Home extends Component<IHomeProps> {
     return (
       <div>
         <Rooms handleChangeValue={handleChangeValue} />
-        <button type="submit" onClick={() => roomsStore.submitRoomData()}>
+        <StyledButton type="submit" onClick={() => roomsStore.submitRoomData()}>
           Submit
-        </button>
+        </StyledButton>
         {roomsStore.loading && <div>Loading...</div>}
       </div>
     )
