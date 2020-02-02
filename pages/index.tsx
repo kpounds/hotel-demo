@@ -1,53 +1,60 @@
-import { NextPage } from "next"
-import Room from "../components/Room"
+import { SyntheticEvent, Component } from "react"
 import RoomsApi from "../api/RoomsApi"
 import RoomList from "../models/RoomList"
-import { useState, useEffect, SyntheticEvent } from "react"
+import RoomsStore from "../stores/RoomsStore"
+import { inject, observer } from "mobx-react"
+import Rooms from "../components/Rooms"
 
-const Home: NextPage<{ defaultData: RoomList[] }> = ({
-  defaultData = [new RoomList()]
-}) => {
-  const [roomData, setRoomData] = useState(defaultData)
-  useEffect(() => {
-    // get user's saved data or default values once on mount
-    const data = RoomsApi.getRoomData()
-    setRoomData(data)
-  }, [])
-  const handleChangeValue = (
-    e: SyntheticEvent,
-    room: number,
-    key: "selected" | "adults" | "children"
-  ) => {
-    const checkBox = e.target as HTMLInputElement
-    const select = e.target as HTMLSelectElement
-    const current = roomData
-    const roomToChange = current.findIndex(x => x.room === room)
-    key === "selected"
-      ? (current[roomToChange][key] = checkBox.checked)
-      : (current[roomToChange][key] = parseInt(select.value))
-    console.log(current)
-    setRoomData(current)
-  }
-  if (!roomData) return <div>Loading...</div>
-  return (
-    <div>
-      <form>
-        {roomData.map((item: RoomList) => {
-          return (
-            <Room
-              key={item.room}
-              roomData={item}
-              checked={item.selected}
-              handleChangeValue={handleChangeValue}
-            />
-          )
-        })}
-        <button type="submit" onClick={() => RoomsApi.setRoomData(roomData)}>
+interface IHomeProps {
+  roomsStore: RoomsStore
+}
+
+@inject("roomsStore")
+@observer
+class Home extends Component<IHomeProps> {
+  public render() {
+    const { roomsStore } = this.props
+    const handleChangeValue = (
+      e: SyntheticEvent,
+      room: number,
+      key: "selected" | "adults" | "children"
+    ) => {
+      const checkBox = e.target as HTMLInputElement
+      const select = e.target as HTMLSelectElement
+      const current = roomsStore.roomData
+      const roomToChange = current.findIndex(x => x.room === room)
+      key === "selected"
+        ? (current[roomToChange][key] = checkBox.checked)
+        : (current[roomToChange][key] = parseInt(select.value))
+
+      current.map(item => {
+        if (key === "selected") {
+          room > item.room && checkBox.checked
+            ? (item.selected = true)
+            : room < item.room && !checkBox.checked
+            ? (item.selected = false)
+            : null
+        }
+        return item
+      })
+      roomsStore.updateRoomData(current)
+    }
+    return (
+      <div>
+        <Rooms handleChangeValue={handleChangeValue} />
+        <button type="submit" onClick={() => roomsStore.submitRoomData()}>
           Submit
         </button>
-      </form>
-    </div>
-  )
+        {roomsStore.loading && <div>Loading...</div>}
+      </div>
+    )
+  }
+  public componentDidMount() {
+    const { roomsStore } = this.props
+    // get user's saved data or default values once on mount
+    const data = RoomsApi.getRoomData()
+    roomsStore.updateRoomData(data)
+  }
 }
 
 export default Home
