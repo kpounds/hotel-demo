@@ -20,7 +20,11 @@ class Home extends Component<IHomeProps> {
     return (
       <div>
         <Rooms roomsStore={roomsStore} />
-        <StyledButton type="submit" onClick={() => roomsStore.submitRoomData()}>
+        <StyledButton
+          type="submit"
+          title="Submit and Save Results"
+          onClick={() => roomsStore.submitRoomData()}
+        >
           Submit
         </StyledButton>
         {roomsStore.loading && <div>Loading...</div>}
