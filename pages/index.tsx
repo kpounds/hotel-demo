@@ -4,6 +4,7 @@ import RoomsStore from "../stores/RoomsStore"
 import { inject, observer } from "mobx-react"
 import Rooms from "../components/Rooms"
 import styled from "styled-components"
+import RoomList from "../models/RoomList"
 
 interface IHomeProps {
   roomsStore: RoomsStore
@@ -30,14 +31,28 @@ class Home extends Component<IHomeProps> {
       key === "selected"
         ? (current[roomToChange][key] = checkBox.checked)
         : (current[roomToChange][key] = parseInt(select.value))
-
+      // map over the current state of room data
       current.map(item => {
+        // if the change action is a checkbox
         if (key === "selected") {
-          room > item.room && checkBox.checked
-            ? (item.selected = true)
-            : room < item.room && !checkBox.checked
-            ? (item.selected = false)
-            : null
+          // checked room is the current mapped room and is not checked
+          if (room === item.room && !checkBox.checked) {
+            // reset values
+            item.adults = 1
+            item.children = 0
+          }
+          // checked room is greater than current mapped room and value is checked
+          if (room > item.room && checkBox.checked) {
+            // set to checked
+            item.selected = true
+          }
+          // checked room is less than the current mapped room and value is unchecked
+          if (room < item.room && !checkBox.checked) {
+            // set previous rooms to unchecked and reset values
+            item.selected = false
+            item.adults = 1
+            item.children = 0
+          }
         }
         // TODO: reset values if selected is false.
         return item
