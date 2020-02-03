@@ -39,6 +39,7 @@ class Home extends Component<IHomeProps> {
             ? (item.selected = false)
             : null
         }
+        // TODO: reset values if selected is false.
         return item
       })
       roomsStore.updateRoomData(current)
