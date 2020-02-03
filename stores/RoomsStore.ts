@@ -14,13 +14,6 @@ export default class RoomsStore {
   @observable
   public loading: boolean = false
 
-  hydrate(serializedStore: RoomsStore) {
-    this.roomData =
-      serializedStore.roomData !== defaultRoomData
-        ? serializedStore.roomData
-        : defaultRoomData
-  }
-
   @action
   public updateRoomData = (data: RoomList[]) => {
     this.roomData = data

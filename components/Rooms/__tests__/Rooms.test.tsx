@@ -65,4 +65,25 @@ describe("Rooms", () => {
     expect(parseInt(room3AdultSelect.value)).toBe(mockRoomData[2].adults)
     expect(parseInt(room3ChildSelect.value)).toBe(mockRoomData[2].children)
   })
+
+  it("Should update store with select values when changed", () => {
+    const { container } = render(<Rooms roomsStore={mockRoomsStore} />)
+
+    const room4AdultSelect = container.querySelector(
+      'select[name="adults-4"]'
+    )! as HTMLSelectElement
+    const room4ChildSelect = container.querySelector(
+      'select[name="children-4"]'
+    )! as HTMLSelectElement
+
+    fireEvent.change(room4AdultSelect, { target: { value: "2" } })
+    expect(mockRoomsStore.roomData[3].adults).toBe(
+      parseInt(room4AdultSelect.value)
+    )
+
+    fireEvent.change(room4ChildSelect, { target: { value: "1" } })
+    expect(mockRoomsStore.roomData[3].children).toBe(
+      parseInt(room4ChildSelect.value)
+    )
+  })
 })
