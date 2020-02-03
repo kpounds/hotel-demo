@@ -12,7 +12,7 @@ class MainView extends App<AppProps> {
     const { Component, pageProps } = this.props
     return (
       <Provider roomsStore={this.roomsStore}>
-        <ToastContainer autoClose={5000} />
+        <ToastContainer autoClose={5000} position="bottom-left" />
         <Component {...pageProps} />
       </Provider>
     )
