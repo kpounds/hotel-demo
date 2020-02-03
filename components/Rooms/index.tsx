@@ -62,7 +62,7 @@ const Rooms: NextPage<IRoomProps> = ({ roomsStore }) => {
         return (
           <StyledRoom
             disabled={!room.selected}
-            className="room-container"
+            className={`room-container room-${room.room}`}
             key={room.room}
           >
             <StyledHeader disabled={!room.selected}>
