@@ -1,4 +1,4 @@
-import React, { SyntheticEvent } from "react"
+import { SyntheticEvent } from "react"
 import RoomList from "../../models/RoomList"
 import { useObserver } from "mobx-react"
 import RoomsStore from "../../stores/RoomsStore"
@@ -60,7 +60,11 @@ const Rooms: NextPage<IRoomProps> = ({ roomsStore }) => {
     <FlexContainer>
       {roomsStore.roomData.map((room: RoomList) => {
         return (
-          <StyledRoom disabled={!room.selected} key={room.room}>
+          <StyledRoom
+            disabled={!room.selected}
+            className="room-container"
+            key={room.room}
+          >
             <StyledHeader disabled={!room.selected}>
               {room.room !== 1 ? (
                 <>
