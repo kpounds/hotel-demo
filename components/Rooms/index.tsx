@@ -16,44 +16,44 @@ interface IRoomProps {
 }
 
 const Rooms: NextPage<IRoomProps> = ({ roomsStore }) => {
-  const handleChangeValue = (
-    e: SyntheticEvent,
-    room: number,
-    key: "selected" | "adults" | "children",
-    roomsStore: RoomsStore
-  ) => {
+  const handleChangeCheckbox = (e: SyntheticEvent, room: number) => {
     const checkBox = e.target as HTMLInputElement
-    const select = e.target as HTMLSelectElement
     const current = roomsStore.roomData
     const roomToChange = current.findIndex(x => x.room === room)
-    key === "selected"
-      ? (current[roomToChange][key] = checkBox.checked)
-      : (current[roomToChange][key] = parseInt(select.value))
+    current[roomToChange]["selected"] = checkBox.checked
     // map over the current state of room data
     current.map(item => {
-      // if the event action is a checkbox
-      if (key === "selected") {
-        // checked room is the current mapped room and is not checked
-        if (room === item.room && !checkBox.checked) {
-          // reset values
-          item.adults = 1
-          item.children = 0
-        }
-        // checked room is greater than current mapped room and value is checked
-        if (room > item.room && checkBox.checked) {
-          // set current map room to checked
-          item.selected = true
-        }
-        // checked room is less than the current mapped room and value is unchecked
-        if (room < item.room && !checkBox.checked) {
-          // set previous rooms to unchecked and reset values
-          item.selected = false
-          item.adults = 1
-          item.children = 0
-        }
+      // checked room is the current mapped room and is not checked
+      if (room === item.room && !checkBox.checked) {
+        // reset values
+        item.adults = 1
+        item.children = 0
+      }
+      // checked room is greater than current mapped room and value is checked
+      if (room > item.room && checkBox.checked) {
+        // set current map room to checked
+        item.selected = true
+      }
+      // checked room is less than the current mapped room and value is unchecked
+      if (room < item.room && !checkBox.checked) {
+        // set previous rooms to unchecked and reset values
+        item.selected = false
+        item.adults = 1
+        item.children = 0
       }
       return item
     })
+    roomsStore.updateRoomData(current)
+  }
+  const handleChangeSelect = (
+    e: SyntheticEvent,
+    room: number,
+    key: "adults" | "children"
+  ) => {
+    const select = e.target as HTMLSelectElement
+    const current = roomsStore.roomData
+    const roomToChange = current.findIndex(x => x.room === room)
+    current[roomToChange][key] = parseInt(select.value)
     roomsStore.updateRoomData(current)
   }
   return useObserver(() => (
@@ -74,9 +74,7 @@ const Rooms: NextPage<IRoomProps> = ({ roomsStore }) => {
                     name={`roomCheck-${room.room}`}
                     title={`Room ${room.room} select`}
                     id={`roomCheck-${room.room}`}
-                    onChange={e =>
-                      handleChangeValue(e, room.room, "selected", roomsStore)
-                    }
+                    onChange={e => handleChangeCheckbox(e, room.room)}
                   />
                   <label htmlFor={`roomCheck-${room.room}`}>
                     Room {room.room}
@@ -99,9 +97,7 @@ const Rooms: NextPage<IRoomProps> = ({ roomsStore }) => {
                   value={room.adults}
                   title={`Select number of adults for room ${room.room}`}
                   disabled={!room.selected}
-                  onChange={e =>
-                    handleChangeValue(e, room.room, "adults", roomsStore)
-                  }
+                  onChange={e => handleChangeSelect(e, room.room, "adults")}
                 >
                   <option value={1}>1</option>
                   <option value={2}>2</option>
@@ -119,9 +115,7 @@ const Rooms: NextPage<IRoomProps> = ({ roomsStore }) => {
                   value={room.children}
                   title={`Select number of children for room ${room.room}`}
                   disabled={!room.selected}
-                  onChange={e =>
-                    handleChangeValue(e, room.room, "children", roomsStore)
-                  }
+                  onChange={e => handleChangeSelect(e, room.room, "children")}
                 >
                   <option value={0}>0</option>
                   <option value={1}>1</option>
