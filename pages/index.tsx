@@ -1,43 +1,28 @@
-import { Component } from "react"
-import RoomsApi from "../api/RoomsApi"
-import RoomsStore from "../stores/RoomsStore"
-import { inject } from "mobx-react"
+import { FunctionComponent } from "react"
 import Rooms from "../components/Rooms"
 import styled from "styled-components"
-
-interface IHomeProps {
-  roomsStore: RoomsStore
-}
+import { useRoomStore } from "../providers/StoreProvider"
 
 const StyledButton = styled.button`
   margin: 7px;
 `
 
-@inject("roomsStore")
-class Home extends Component<IHomeProps> {
-  public render() {
-    const { roomsStore } = this.props
-    return (
-      <div>
-        <Rooms roomsStore={roomsStore} />
-        <StyledButton
-          type="submit"
-          title="Submit and Save Results"
-          className="room-submit"
-          onClick={() => roomsStore.submitRoomData()}
-        >
-          Submit
-        </StyledButton>
-        {roomsStore.loading && <div className="loading">Loading...</div>}
-      </div>
-    )
-  }
-  public componentDidMount() {
-    const { roomsStore } = this.props
-    // get user's saved data or default values once on mount
-    const data = RoomsApi.getRoomData()
-    roomsStore.updateRoomData(data)
-  }
+const Home: FunctionComponent = () => {
+  const { submitRoomData, loading } = useRoomStore()
+  return (
+    <div>
+      <Rooms />
+      <StyledButton
+        type="submit"
+        title="Submit and Save Results"
+        className="room-submit"
+        onClick={() => submitRoomData()}
+      >
+        Submit
+      </StyledButton>
+      {loading && <div className="loading">Loading...</div>}
+    </div>
+  )
 }
 
 export default Home

@@ -1,7 +1,6 @@
-import { SyntheticEvent } from "react"
+import { SyntheticEvent, useEffect } from "react"
 import RoomList from "../../models/RoomList"
-import { useObserver } from "mobx-react"
-import RoomsStore from "../../stores/RoomsStore"
+import { observer } from "mobx-react"
 import { NextPage } from "next"
 import {
   FlexContainer,
@@ -10,15 +9,18 @@ import {
   SelectContainer,
   SelectLabel
 } from "../Style"
+import { useRoomStore } from "../../providers/StoreProvider"
+import RoomsApi from "../../api/RoomsApi"
 
-interface IRoomProps {
-  roomsStore: RoomsStore
-}
-
-const Rooms: NextPage<IRoomProps> = ({ roomsStore }) => {
+const Rooms: NextPage = observer(() => {
+  const { roomData, updateRoomData } = useRoomStore()
+  useEffect(() => {
+    const data = RoomsApi.getRoomData()
+    updateRoomData(data)
+  }, [])
   const handleChangeCheckbox = (e: SyntheticEvent, room: number) => {
     const checkBox = e.target as HTMLInputElement
-    const current = roomsStore.roomData
+    const current = roomData
     const roomToChange = current.findIndex(x => x.room === room)
     current[roomToChange]["selected"] = checkBox.checked
     // map over the current state of room data
@@ -43,7 +45,7 @@ const Rooms: NextPage<IRoomProps> = ({ roomsStore }) => {
       }
       return item
     })
-    roomsStore.updateRoomData(current)
+    updateRoomData(current)
   }
   const handleChangeSelect = (
     e: SyntheticEvent,
@@ -51,14 +53,14 @@ const Rooms: NextPage<IRoomProps> = ({ roomsStore }) => {
     key: "adults" | "children"
   ) => {
     const select = e.target as HTMLSelectElement
-    const current = roomsStore.roomData
+    const current = roomData
     const roomToChange = current.findIndex(x => x.room === room)
     current[roomToChange][key] = parseInt(select.value)
-    roomsStore.updateRoomData(current)
+    updateRoomData(current)
   }
-  return useObserver(() => (
+  return (
     <FlexContainer>
-      {roomsStore.roomData.map((room: RoomList) => {
+      {roomData.map((room: RoomList) => {
         return (
           <StyledRoom
             disabled={!room.selected}
@@ -127,7 +129,7 @@ const Rooms: NextPage<IRoomProps> = ({ roomsStore }) => {
         )
       })}
     </FlexContainer>
-  ))
-}
+  )
+})
 
 export default Rooms

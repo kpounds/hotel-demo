@@ -4,7 +4,7 @@ import Rooms from ".."
 import RoomsStore from "../../../stores/RoomsStore"
 import RoomList from "../../../models/RoomList"
 import { mockRoomData } from "../../../mock/mockRoomData"
-import Home from "../../../pages"
+import { RoomStoreContext } from "../../../providers/StoreProvider"
 
 const mockRoomsStore = new RoomsStore()
 mockRoomsStore.updateRoomData = (mockData: RoomList[]) => {
@@ -14,14 +14,22 @@ localStorage.setItem("rooms", JSON.stringify(mockRoomData))
 
 describe("Rooms", () => {
   it("Should render default number of rooms in list", () => {
-    const { container } = render(<Rooms roomsStore={mockRoomsStore} />)
+    const { container } = render(
+      <RoomStoreContext.Provider value={mockRoomsStore}>
+        <Rooms />
+      </RoomStoreContext.Provider>
+    )
 
     const rooms = container.querySelectorAll(".room-container")
     expect(rooms.length).toBe(mockRoomsStore.roomData.length)
   })
 
   it("Should check any boxes for rooms before it when checked and not be disabled", () => {
-    const { container } = render(<Rooms roomsStore={mockRoomsStore} />)
+    const { container } = render(
+      <RoomStoreContext.Provider value={mockRoomsStore}>
+        <Rooms />
+      </RoomStoreContext.Provider>
+    )
 
     const room4Select = container.querySelector('input[title="Room 4 select"]')!
     fireEvent.click(room4Select)
@@ -35,7 +43,11 @@ describe("Rooms", () => {
   it("Should uncheck any boxes for rooms after it when unchecked and be disabled", () => {
     // set data to mocked data
     mockRoomsStore.updateRoomData(mockRoomData)
-    const { container } = render(<Rooms roomsStore={mockRoomsStore} />)
+    const { container } = render(
+      <RoomStoreContext.Provider value={mockRoomsStore}>
+        <Rooms />
+      </RoomStoreContext.Provider>
+    )
 
     const room2Select = container.querySelector('input[title="Room 2 select"]')!
     fireEvent.click(room2Select)
@@ -50,9 +62,9 @@ describe("Rooms", () => {
   it("Should match select box values with localStorage on first render", () => {
     // need to render Home here to force component did mount to get local storage data
     const { container } = render(
-      <Home roomsStore={mockRoomsStore}>
-        <Rooms roomsStore={mockRoomsStore} />
-      </Home>
+      <RoomStoreContext.Provider value={mockRoomsStore}>
+        <Rooms />
+      </RoomStoreContext.Provider>
     )
 
     const room3AdultSelect = container.querySelector(
@@ -67,7 +79,11 @@ describe("Rooms", () => {
   })
 
   it("Should update store with select values when changed", () => {
-    const { container } = render(<Rooms roomsStore={mockRoomsStore} />)
+    const { container } = render(
+      <RoomStoreContext.Provider value={mockRoomsStore}>
+        <Rooms />
+      </RoomStoreContext.Provider>
+    )
 
     const room4AdultSelect = container.querySelector(
       'select[name="adults-4"]'
